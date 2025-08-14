@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIFA SOLIDÁRIA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #00ff00; /* verde florescente */
+            font-size: 3em;
+            text-transform: uppercase;
+        }
+        .prizes {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            max-width: 600px;
+        }
+        .prizes h2 {
+            font-size: 1.5em;
+            color: #ffea00;
+            margin-bottom: 10px;
+        }
+        .prizes li {
+            font-size: 1.3em;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .numbers {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        .numbers button {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0b3d91; /* azul marinho */
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .numbers button.selected {
+            background-color: #4caf50;
+        }
+        .buy-btn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #e91e63;
+            color: #fff;
+            transition: all 0.3s;
+        }
+        .buy-btn:hover {
+            background-color: #ff4081;
+        }
+        .final-screen {
+            display: none;
+            font-size: 1.3em;
+            color: #ffffff;
+            margin-top: 20px;
+        }
+        .final-screen p {
+            margin: 15px 0;
+        }
+        .highlight {
+            color: #ff8c00;
+            font-weight: bold;
+            font-size: 1.4em;
+        }
+        .name-input {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            width: 60%;
+            border-radius: 5px;
+            border: none;
+        }
+        .confirm-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #e91e63;
+            color: #fff;
+            margin-top: 10px;
+        }
+        .pix-container {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .pix-link {
+            color: #1e90ff;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .copy-btn {
+            padding: 8px 12px;
+            background-color: #ff8c00;
+            color: #000;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .copy-btn:hover {
+            background-color: #ffa500;
+        }
+    </style>
+</head>
+<body>
+    <h1>RIFA SOLIDÁRIA</h1>
+
+    <div class="prizes">
+        <h2>🏆 PRÊMIOS 🏆</h2>
+        <ul>
+            <li>1º Prêmio: R$150,00 via Pix 🏅</li>
+            <li>2º Prêmio: R$100,00 via Pix 🥈</li>
+            <li>3º Prêmio: R$50,00 via Pix 🥉</li>
+        </ul>
+    </div>
+
+    <div class="numbers" id="numberContainer"></div>
+
+    <button class="buy-btn" id="buyButton">Comprar</button>
+
+    <div class="final-screen" id="finalScreen">
+        <p>Digite seu nome para confirmar a compra:</p>
+        <input type="text" id="userName" class="name-input" placeholder="Seu nome aqui">
+        <button class="confirm-btn" id="confirmBtn">Confirmar</button>
+
+        <div id="confirmationMessage" style="margin-top:20px;"></div>
+    </div>
+
+    <script>
+        const container = document.getElementById('numberContainer');
+        const selectedNumbers = new Set();
+        const buyButton = document.getElementById('buyButton');
+        const finalScreen = document.getElementById('finalScreen');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const userNameInput = document.getElementById('userName');
+        const pixKey = "rifa.solidaria.bo@gmail.com";
+
+        // Cria os números
+        for(let i = 1; i <= 500; i++){
+            const btn = document.createElement('button');
+            btn.textContent = i;
+            btn.onclick = () => {
+                btn.classList.toggle('selected');
+                if(btn.classList.contains('selected')){
+                    selectedNumbers.add(i);
+                } else {
+                    selectedNumbers.delete(i);
+                }
+            };
+            container.appendChild(btn);
+        }
+
+        // Comprar: mostra tela para digitar nome
+        buyButton.onclick = () => {
+            if(selectedNumbers.size === 0){
+                alert('Selecione pelo menos um número antes de comprar!');
+                return;
+            }
+            finalScreen.style.display = 'block';
+            buyButton.style.display = 'none';
+            container.style.display = 'none';
+        };
+
+        // Confirmar nome e mostrar mensagem final
+        confirmBtn.onclick = () => {
+            const name = userNameInput.value.trim();
+            if(name === ''){
+                alert('Digite seu nome para continuar.');
+                return;
+            }
+            confirmationMessage.innerHTML = `
+                <p>Oi <strong>${name}</strong>, muito obrigado pela sua compra!</p>
+                <p class="highlight">
+                    É <strong>OBRIGATÓRIO</strong> após o pagamento enviar os números selecionados para checar se ainda estão disponíveis!
+                </p>
+                <p>Seus números escolhidos: <strong>${Array.from(selectedNumbers).join(', ')}</strong></p>
+                <p>Valor total: <strong>R$${selectedNumbers.size * 3}</strong></p>
+                <div class="pix-container">
+                    <span>Pix para pagamento:</span>
+                    <span class="pix-link" id="pixLink">${pixKey}</span>
+                    <button class="copy-btn" id="copyPixBtn">Copiar PIX</button>
+                </div>
+                <p>Tire um print desta tela para salvar seus números!</p>
+            `;
+
+            // Tornar PIX clicável para copiar
+            const pixElement = document.getElementById('pixLink');
+            pixElement.onclick = () => {
+                navigator.clipboard.writeText(pixKey).then(() => {
+                    alert("PIX copiado para a área de transferência!");
+                });
+            };
+
+            // Botão físico para copiar PIX
+            const copyBtn = document.getElementById('copyPixBtn');
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(pixKey).then(() => {
+                    alert("PIX copiado para a área de transferência!");
+                });
+            };
+        };
+    </script>
+</body>
+</html>
+
